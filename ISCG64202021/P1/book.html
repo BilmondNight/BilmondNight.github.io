@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<body>
+
+<form id="bookForm" action="/action_page.php">
+    <div class="tab">
+        <h1 style="text-align: center">SELECT YOUR DATE</h1>
+        <p><span>Check in</span></p>
+        <p><input type="date" id="dateIn" oninput="this.className = ''" name="dateIn"></p><br>
+        <p>Check out</p>
+        <p><input type="date" id="dateOut" oninput="this.className = ''" name="dateOut"></p><br>
+        <p>Number of adults</p>
+        <p><input type="number" min="0" placeholder="0" id="adult" oninput="this.className = ''" name="adult"></p><br>
+        <p>Number of children</p>
+        <p><input type="number" min="0" placeholder="0" id="children" oninput="this.className = ''" name="children"></p><br>
+        <p>
+            <label for="room">Number of rooms</label>
+            <select name="room" id="room">
+                <option value="1" selected>1 room</option>
+                <option value="2">2 rooms</option>
+                <option value="3">3 rooms</option>
+                <option value="4">4 rooms</option>
+            </select>
+        </p><br>
+    </div>
+
+    <div class="tab">
+        <h1 style="text-align: center">FACILITIES</h1>
+        <p>Do you need cooling facilities?</p>
+        <input class="merge" type="radio" name="r1" value="yes" checked><label>&nbsp;Yes</label><br>
+        <input class="merge" type="radio" name="r1" value="no"><label>&nbsp;No</label><br><br>
+        <p>Do you need wifi?</p>
+        <input class="merge" type="radio" name="r2" value="yes" checked><label>&nbsp;Yes</label><br>
+        <input class="merge" type="radio" name="r2" value="no"><label>&nbsp;No</label><br><br>
+    </div>
+
+    <div class="tab">
+        <h1 style="text-align: center">SELECT YOUR EQUIPMENT</h1>
+        <p>Do you need to book equipment from us?</p>
+        <div class="grid-3">
+            <span class="grid-item" style="font-weight: bold; font-size: 20px">Item</span>
+            <span class="grid-item" style="font-weight: bold; font-size: 20px">Quantity</span>
+            <span class="grid-item" style="font-weight: bold; font-size: 20px">Color</span>
+
+            <span class="grid-item">Swinming Goggles</span>
+            <span class="grid-item"><label id="showSwim">0</label> <input class="merge" type="range" id="swim" min="0" max="9" value="0" onchange="showRange()"></span>
+            <span class="grid-item"><input class="merge" type="color" value="#0000FF" id="colorSwim"></span>
+
+            <span class="grid-item">Surf Boards</span>
+            <span class="grid-item"><label id="showSurf">0</label>&nbsp;<input class="merge" type="range" id="surf" min="0" max="9" value="0" onchange="showRange()"></span>
+            <span class="grid-item"><input class="merge" type="color" value="#0000FF" id="colorSurf"></span>
+        </div>
+    </div>
+
+    <div class="tab">
+        <h1 style="text-align: center">YOUR PERSONAL DETAILS</h1>
+        <p><span>First Name</span></p>
+        <p><input id="fname" oninput="this.className = ''" name="fname"></p>
+        <p><span>Last Name</span></p>
+        <p><input id="lname" oninput="this.className = ''" name="lname"></p>
+        <p><span>Email</span></p>
+        <p><input id="email" oninput="this.className = ''" name="lname"></p>
+        <p>Do you agree with the local native conservation initiative agreement?<br>
+            <input class="merge" type="checkbox">&nbsp;Yes, I agree.</p>
+    </div>
+
+    <div style="overflow:auto;">
+        <div style="float:right;">
+            <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+            <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+        </div>
+    </div>
+
+    <div style="text-align:center;margin-top:40px;">
+        <span class="step"></span>
+        <span class="step"></span>
+        <span class="step"></span>
+        <span class="step"></span>
+    </div>
+
+    <div class="details">
+        <h1 style="text-align: center">YOUR DETAILS LIST</h1>
+        <ul>
+            <li><label>First name:</label>&nbsp;<label id="sfname"></label></li>
+            <li><label>Last name:</label>&nbsp;<label id="slname"></label></li>
+            <li><label>Email:</label>&nbsp;<label id="semail"></label></li>
+            <li><label>Date of check-in:</label>&nbsp;<label id="sdateIn"></label></li>
+            <li><label>Date of check-out:</label>&nbsp;<label id="sdateOut"></label></li>
+            <li><label>Adults:</label>&nbsp;<label id="sadult"></label></li>
+            <li><label>Children:</label>&nbsp;<label id="schildren"></label></li>
+            <li><label>Rooms:</label>&nbsp;<label id="sroom"></label></li>
+            <li><label>Cooking facilities:</label>&nbsp;<label id="scook"></label></li>
+            <li><label>Wifi:</label>&nbsp;<label id="swifi"></label></li>
+            <li><label>Swimming Goggles:</label>&nbsp;<label id="sswim"></label>&nbsp;<label id="scolorSwim"></label></li>
+            <li><label>Surf Boards:</label>&nbsp;<label id="ssurf"></label>&nbsp;<label id="scolorSurf"></label></li>
+        </ul>
+    </div>
+</form>
+
+<script src="scripts/booking.js"></script>
+
+</body>
+</html>
