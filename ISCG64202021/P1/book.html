@@ -4,7 +4,7 @@
 
 <body>
 
-<form id="bookForm" action="/action_page.php">
+<form id="bookForm" action="">
     <div class="tab">
         <h1 style="text-align: center">SELECT YOUR DATE</h1>
         <p><span>Check in</span></p>
@@ -63,7 +63,7 @@
         <p><span>Email</span></p>
         <p><input id="email" oninput="this.className = ''" name="lname"></p>
         <p>Do you agree with the local native conservation initiative agreement?<br>
-            <input class="merge" type="checkbox">&nbsp;Yes, I agree.</p>
+            <input class="merge" type="checkbox" id="check1">&nbsp;Yes, I agree.</p>
     </div>
 
     <div style="overflow:auto;">
@@ -82,6 +82,7 @@
 
     <div class="details">
         <h1 style="text-align: center">YOUR DETAILS LIST</h1>
+        <span class="close">&times;</span>
         <ul>
             <li><label>First name:</label>&nbsp;<label id="sfname"></label></li>
             <li><label>Last name:</label>&nbsp;<label id="slname"></label></li>
