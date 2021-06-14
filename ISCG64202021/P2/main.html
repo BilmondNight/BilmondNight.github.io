@@ -12,15 +12,16 @@
 
 <div id="header" class="header"></div>
 <div>
+    <h1>DINOSAUR ON BEACH</h1>
+    <h4>Use ←↑→↓ arrow keys or AWDS to control dinosaur</h4>
+    <h4>Press space key to eat worms</h4>
+</div>
+<div>
     <div style="background-image: url('image/beach.jpg'); position: absolute">
         <canvas id="canvas" width="1000" height="500" tabindex="0">Canvas tag not supported</canvas>
     </div>
 
     <div id="right" style="">
-        <span>Your Score</span>&nbsp;&nbsp;
-        <input id="score" type="text" readonly>
-        <br><br>
-
         <span>Set Time</span>&nbsp;&nbsp;
         <select name="time" id="time">
             <option value="60">1 minutes</option>
@@ -31,8 +32,18 @@
         </select>
         <br><br>
 
-        <button id="start" class="dino">Start / Restart</button>
+        <button id="start" class="dino">Start</button>
+        <button id="restart" class="dino">Restart</button>
+        <a href="../index.html"><button style="position: absolute; right: 20px; bottom: 20px">Return</button></a>
     </div>
+</div>
+
+<div class="details">
+    <h1 style="text-align: center">Congratulations!</h1>
+    <span class="close">&times;</span>
+    <h3 style="text-align: center">Your Score</h3>
+    <h3 style="text-align: center" id="score"></h3>
+
 </div>
 
 </body>

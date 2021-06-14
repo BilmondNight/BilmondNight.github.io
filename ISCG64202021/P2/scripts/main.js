@@ -100,11 +100,12 @@ $(document).ready(function () {
         ms = second * 1000;
         battle.play();
 
-        setInterval(() => {
-            // gameOverModal.show()
+        var eating = setInterval(() => {
+            visible();
             battle.pause();
             finish.play();
             document.getElementById('score').innerHTML = score;
+            clearInterval(eating);
         }, ms);
 
         var counter = setInterval(() => {
@@ -114,7 +115,7 @@ $(document).ready(function () {
             }
         }, 1000);
 
-        window.requestAnimationFrame(gameLoop); // start to play
+        requestAnimationFrame(gameLoop); // start to play
     });
 
     var fps = 10;
@@ -203,7 +204,7 @@ $(document).ready(function () {
         ctx.fillText("Time: " + second, 900, 60);
 
         setTimeout(function () {
-            window.requestAnimationFrame(gameLoop);
+            requestAnimationFrame(gameLoop);
         }, 1000 / fps);
     }
 
@@ -243,13 +244,21 @@ $(document).ready(function () {
         return !(px > ww + wx || wx > pw + px || py > wh + wy || wy > ph + py);
     }
 
-    function writeScore(score) {
-        ctx.font = "25px MS UI Gothic";
-        ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-        ctx.fillText("SCORE: " +sc, 0, 30);
-}
-
     function getRandomInRange(min, max) {
         return Math.random() * (Math.abs(min) + max) + min;
     }
+
+    function visible() {
+        $(".details").css("visibility", "visible");
+
+        $(".close").click(function () {
+            $(".details").css("display", "none");
+            location.reload();
+        });
+    }
+
+    var restart = document.getElementById("start");
+    $("#restart").click(function () {
+        location.reload();
+    });
 });

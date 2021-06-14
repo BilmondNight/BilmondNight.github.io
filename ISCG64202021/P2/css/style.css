@@ -20,6 +20,7 @@ span {
 }
 
 .dino {
+    width: 120px;
     background-color: transparent;
     font-size: 20px;
     color: blue;
@@ -31,4 +32,31 @@ span {
 
 #start:hover {
     transform: scale(1.05);
+}
+
+.details {
+    position: absolute;
+    top: 50px;
+    left: 60px;
+    width: 80%;
+    background-color: #fffed9;
+    border: black solid 2px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px rgba(79, 4, 19, 0.61);
+    visibility: hidden;
+}
+
+.close {
+    position: absolute;
+    right: 10px;
+    margin-top: -55px;
+    color: black;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.close:hover{
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
 }
