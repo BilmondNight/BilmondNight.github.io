@@ -32,6 +32,8 @@ $(document).ready(function () {
     var keys = [];
     var eat = false;
     var score = 0;
+    var second = 0;
+    var ms = 0;
 
     window.addEventListener("keydown", function(event) {
         if (event.preventDefaulted) {
@@ -81,43 +83,26 @@ $(document).ready(function () {
         }
     }, true);
 
-    // var worm = { // init worm
-    //     x: getRandomInRange(0, canvas.width * 3/4),
-    //     y: getRandomInRange(0, canvas.height -10),
-    //     vx: getRandomInRange(-20, 20),
-    //     vy: getRandomInRange(-10, 10),
-    //     r: 5,
-    //     lc: 0,
-    // };
+    var worm = { // init worm
+        x: getRandomInRange(0, canvas.width * 3/4),
+        y: getRandomInRange(0, canvas.height -10),
+        vx: getRandomInRange(-20, 20),
+        vy: getRandomInRange(-10, 10),
+        r: 5,
+        lc: 0,
+    };
     var worms = [];
-    // worms.push(worm);
+    worms.push(worm);
 
     var start = document.getElementById("start");
     start.addEventListener("click", function () {
-        var second = document.getElementById("time").value;
-        var ms = second * 1000;
+        second = document.getElementById("time").value;
+        ms = second * 1000;
         battle.play();
-
-        // create player
-        frame = ++ frame % 4;
-        player.sx = frame * (player.width + 3);
-        player.sy = direction * player.height;
-
-        // create worms
-        if (Math.random() < 0.08 && worms.length < 10) { // randomly generate a new object, no more than 10 at same time
-            worms.push({
-                x: getRandomInRange(0, canvas.width * 3/4),
-                y: getRandomInRange(0, canvas.height -10),
-                vx: getRandomInRange(-40, 40),
-                vy: getRandomInRange(-20, 20),
-                r: 5,
-                lc: 0,
-            });
-        }
 
         setInterval(() => {
             // gameOverModal.show()
-            battle.stop();
+            battle.pause();
             finish.play();
             document.getElementById('score').innerHTML = score;
         }, ms);
@@ -129,23 +114,34 @@ $(document).ready(function () {
             }
         }, 1000);
 
-        window.requestAnimationFrame(gameLoop);
-        // gameLoop(); // start to run
+        window.requestAnimationFrame(gameLoop); // start to play
     });
 
     var fps = 10;
     function gameLoop() {
-        setTimeout(function () {
-            window.requestAnimationFrame(gameLoop);
-            update();
-        }, 1000 / fps);
-    }
-
-    function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // update player
+        frame = ++ frame % 4;
+        player.sx = frame * (player.width + 3);
+        player.sy = direction * player.height;
+
+        // draw player
         ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
 
+        // create worms
+        if (Math.random() < 0.08 && worms.length < 10) { // randomly generate a new object, no more than 10 at same screen
+            worms.push({
+                x: getRandomInRange(0, canvas.width * 3/4),
+                y: getRandomInRange(0, canvas.height -10),
+                vx: getRandomInRange(-40, 40),
+                vy: getRandomInRange(-20, 20),
+                r: 5,
+                lc: 0,
+            });
+        }
+
+        // update worms
         for (let i = 0; i < worms.length; i++) {
             checkWall(worms[i]);
             checkObject(worms[i], i);
@@ -181,6 +177,7 @@ $(document).ready(function () {
                     break;
             }
 
+            // draw worms
             var gradient = ctx.createRadialGradient(worms[i].x, worms[i].y, worms[i].r, worms[i].x, worms[i].y, worms[i].r/2);
             gradient.addColorStop(0, 'rgb(255,255,255)');
             gradient.addColorStop(0.5, 'rgb(255,255,0)');
@@ -194,6 +191,20 @@ $(document).ready(function () {
             ctx.closePath();
             ctx.stroke();
         }
+
+        // draw score
+        ctx.font = "25px MS UI Gothic";
+        ctx.fillStyle = "black";
+        ctx.fillText("Score: " + score, 900, 20);
+
+        // draw countdown
+        ctx.font = "25px MS UI Gothic";
+        ctx.fillStyle = "black";
+        ctx.fillText("Time: " + second, 900, 60);
+
+        setTimeout(function () {
+            window.requestAnimationFrame(gameLoop);
+        }, 1000 / fps);
     }
 
     function checkWall(worm) {
@@ -220,10 +231,10 @@ $(document).ready(function () {
             if (eat) {
                 score += 1;
                 laugh.play();
-                worms.splice(index, 1);
+                worms[index].lc = 3;
             } else {
                 sad.play();
-                worms.splice(index, 1);
+                worms[index].lc = 3;
             }
         }
     }
@@ -233,7 +244,7 @@ $(document).ready(function () {
     }
 
     function writeScore(score) {
-        ctx.font = '25px "MS UI Gothic"';
+        ctx.font = "25px MS UI Gothic";
         ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
         ctx.fillText("SCORE: " +sc, 0, 30);
 }
