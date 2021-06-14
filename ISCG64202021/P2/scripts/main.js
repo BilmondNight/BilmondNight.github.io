@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    // var requestAnimationFrame = window.requestAnimationFrame;
-    // window.requestAnimationFrame = requestAnimationFrame;
-
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
 
@@ -101,49 +98,83 @@ $(document).ready(function () {
 // boxs.push(box2);
 // boxs.push(box3);
 //
+    var worm = { // init worm
+        x: getRandomInRange(canvas.width - 10),
+        y: getRandomInRange(canvas.height -10),
+        vx: getRandomInRange(5),
+        vy: getRandomInRange(5),
+        r: 5,
+        lc: 0
+    };
 
-    function refreshFrame() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // start the first frame request
+    window.requestAnimationFrame(gameLoop);
 
-        //player
+    function gameLoop() {
+        update();
+        draw();
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    function update() {
+        // player
         frame = ++ frame % 4;
         player.sx = frame * (player.width + 3);
         player.sy = direction * player.height;
-        ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
-        // if (eat) {
-        //     console.log("t");
-        // } else {console.log("f");}
 
-        setTimeout(() => {
-            requestAnimationFrame(refreshFrame);
-        }, 125);
+        // worms
+        switch (worm.lc) {
+            case 0:
+                worm.x += worm.vx;
+                worm.y += worm.vy;
+                worm.lc = 1;
+                break;
+
+            case 1:
+                worm.x += worm.vx;
+                worm.y += worm.vy;
+                worm.r += 1;
+                if (worm.r > 25) {
+                    worm.lc = 2
+                }
+                break;
+
+            case 2:
+                worm.x += worm.vx;
+                worm.y += worm.vy;
+                worm.r -= 1;
+                if (worm.r < 2) {
+                    worm.lc = 3
+                }
+                break;
+
+            case 3:
+                worm.x = getRandomInRange(canvas.width - 10);
+                worm.y = getRandomInRange(canvas.height - 10);
+                worm.lc = 0;
+                break;
+        }
     }
 
-    refreshFrame();
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// function drawPlayer(x, y, getD) {
-//     switch(getD) {
-//         case 1: {
-//             ctx.drawImage(left1, x, y);
-//             break;
-//         }
-//         case 2: {
-//             ctx.drawImage(right1, x, y);
-//             break;
-//         }
-//         case 3: {
-//             ctx.drawImage(left2, x, y);
-//             eat = true;
-//             break;
-//         }
-//         case 4: {
-//             ctx.drawImage(right2, x, y);
-//             eat = true;
-//             break;
-//         }
-//     }
-//     return eat;
-// }
+        ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
+
+        var gradient = ctx.createRadialGradient(worm.x, worm.y, worm.r, Math.PI, 0, 300);
+        gradient.addColorStop(0, 'rgb(255,100,0)');
+        gradient.addColorStop(0.5, 'rgb(255,255,0)');
+        gradient.addColorStop(1, 'rgb(255,255,255)');
+        ctx.beginPath();
+        ctx.arc(worm.x, worm.y, worm.r, Math.PI, 0, false);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.closePath();
+        ctx.stroke();
+    }
+
 
 // function check(x, y, w, h) {
 //     for (i = 0; i < boxs.length; i++) {
@@ -229,4 +260,8 @@ $(document).ready(function () {
 //     ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
 //     ctx.fillText("SCORE: " +sc, 0, 30);
 // }
+
+    function getRandomInRange(max) {
+        return Math.random() * max + 2; // min = 5, max = max + 5
+    }
 });
