@@ -30,6 +30,7 @@ $(document).ready(function () {
     var direction = 0; // sy of sprite sheet
     var keys = [];
     var eat = false;
+    var score = 0;
 
     canvas.addEventListener("keydown", function(event) {
         if (event.preventDefaulted) {
@@ -39,28 +40,28 @@ $(document).ready(function () {
         switch(event.code) {
             case "KeyS": case "ArrowDown":
                 if (player.y <= canvas.height - player.height - 10) { // check wall
-                    player.y += 10;
+                    player.y += 7;
                     direction = 0; // 0 = face down
                 }
                 break;
 
             case "KeyA": case "ArrowLeft":
                 if (player.x >= 10) {
-                    player.x -= 10;
+                    player.x -= 7;
                     direction = 1; // 1 = face left
                 }
                 break;
 
             case "KeyD": case "ArrowRight":
                 if (player.x <= canvas.width - player.width - 10) {
-                    player.x += 10;
+                    player.x += 7;
                     direction = 2; // 2 = face right
                 }
                 break;
 
             case "KeyW": case "ArrowUp":
                 if (player.y >= 10) {
-                    player.y -= 10;
+                    player.y -= 7;
                     direction = 3; // 3 = face up
                 }
                 break;
@@ -82,16 +83,16 @@ $(document).ready(function () {
     var worm1 = { // init worm
         x: getRandomInRange(0, canvas.width * 3/4),
         y: getRandomInRange(0, canvas.height -10),
-        vx: getRandomInRange(-6, 6),
-        vy: getRandomInRange(-3, 3),
+        vx: getRandomInRange(-20, 20),
+        vy: getRandomInRange(-10, 10),
         r: 5,
         lc: 0
     };
     var worm2 = { // init worm
         x: getRandomInRange(0, canvas.width * 3/4),
         y: getRandomInRange(0, canvas.height -10),
-        vx: getRandomInRange(-6, 6),
-        vy: getRandomInRange(-3, 3),
+        vx: getRandomInRange(-25, 25),
+        vy: getRandomInRange(-10, 10),
         r: 5,
         lc: 0
     };
@@ -100,7 +101,7 @@ $(document).ready(function () {
     worms.push(worm2);
 
     window.requestAnimationFrame(gameLoop); // start the first frame request
-    var fps = 15;
+    var fps = 10;
     function gameLoop() {
         setTimeout(function () {
             window.requestAnimationFrame(gameLoop);
@@ -118,19 +119,20 @@ $(document).ready(function () {
         ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
 
         // worms
-        if (Math.random() < 0.03) { // Check if we should generate a new object
+        if (Math.random() < 0.05 && worms.length < 8) { // randomly generate a new object, no more than 8 at same time
             worms.push({
                 x: getRandomInRange(0, canvas.width * 3/4),
                 y: getRandomInRange(0, canvas.height -10),
-                vx: getRandomInRange(-6, 6),
-                vy: getRandomInRange(-3, 3),
+                vx: getRandomInRange(-40, 40),
+                vy: getRandomInRange(-20, 20),
                 r: 5,
                 lc: 0
             });
         }
+
         for (let i = 0; i < worms.length; i++) {
             checkWall(worms[i]);
-            // checkObject(worms[i]);
+            checkObject(worms[i], i);
             switch (worms[i].lc) {
                 case 0:
                     worms[i].x += worms[i].vx;
@@ -141,7 +143,7 @@ $(document).ready(function () {
                 case 1:
                     worms[i].x += worms[i].vx;
                     worms[i].y += worms[i].vy;
-                    worms[i].r += 0.25;
+                    worms[i].r += 0.5;
                     if (worms[i].r > 25) {
                         worms[i].lc = 2
                     }
@@ -150,7 +152,7 @@ $(document).ready(function () {
                 case 2:
                     worms[i].x += worms[i].vx;
                     worms[i].y += worms[i].vy;
-                    worms[i].r -= 0.25;
+                    worms[i].r -= 0.5;
                     if (worms[i].r < 2) {
                         worms[i].lc = 3
                     }
@@ -187,90 +189,38 @@ $(document).ready(function () {
         }
     }
 
-// function check(x, y, w, h) {
-//     for (i = 0; i < boxs.length; i++) {
-//         var x1=boxs[i][0];
-//         var y1=boxs[i][1];
-//         var w1=boxs[i][2];
-//         var h1=boxs[i][3];
-//         if (intersects(x, y, w, h, x1, y1, w1, h1))
-//         {
-//             // alert (" x=" +x1 +" y=" +y1 +" w=" +w1 +" h=" + h1);
-//             if (drawPlayer()) {
-//                 playSound('sound/laugh.mp3');
-//                 sc+=1;
-//                 boxs.splice(i, 1);
-//                 eat = false;
-//             } else { playSound('sound/sad.mp3'); }
-//         }
-//     }
-// }
-//
-// function intersects(xp, yp, wp, hp, xo, yo, wo, ho) {
-//     wo += xo;
-//     wp += xp;
-//     if (xo > wp || xp > wo) return false;
-//     ho += yo;
-//     hp += yp;
-//     if (yo > hp || yp > ho) return false;
-//     return true; // returns true if there is any overlap
-// }
-//
-// function updateCanvas() {
-//     ctx.clearRect(0,0, canvas.width,canvas.height); //Clear Canvas
-//
-//     //Check if we should generate a new object
-//     if (Math.random() < 0.03) {
-//         xu = -20;
-//         yu = Math.floor(Math.random() * canvas.height);
-//         boxs.push([xu, yu, 40, 40]);
-//     }
-//
-//     //Update the position of objects
-//     for (var i = boxs.length - 1; i >= 0; i--) {
-//         if (boxs[i][0] < canvas.width / 4) { // stage 1
-//             boxs[i][0] = boxs[i][0] + (Math.random() * 8 + 2); // moving in different speeds
-//             ctx.beginPath();
-//             ctx.arc(boxs[i][0], boxs[i][1], 20, Math.PI * 2, 0, true);
-//             ctx.closePath();
-//             ctx.fillStyle = "rgba(255,60,20,0.60)";
-//             ctx.fill();
-//         }
-//         else if (boxs[i][0] < canvas.width / 2) { // stage 2
-//             boxs[i][0] = boxs[i][0] + (Math.random() * 4);
-//             ctx.beginPath();
-//             ctx.arc(boxs[i][0], boxs[i][1], 30, Math.PI * 2, 0, true);
-//             ctx.closePath();
-//             ctx.fillStyle = "rgba(255,60,20,1)";
-//             ctx.fill();
-//         }
-//         else if (boxs[i][0] < canvas.width * 3 / 4) { // stage 3
-//             boxs[i][0] = boxs[i][0] + (Math.random() * 3 + 1);
-//             ctx.beginPath();
-//             ctx.arc(boxs[i][0], boxs[i][1], 20, Math.PI * 2, 0, true);
-//             ctx.closePath();
-//             ctx.fillStyle = "rgba(255,60,20,1)";
-//             ctx.fill();
-//         }
-//         else { // stage 4
-//             boxs.splice(i, 1);
-//         }
-//     }
-//     writeScore(sc); // update score
-// }
-//
-// function playSound(soundfile)
-// {
-//     document.getElementById("dummy").innerHTML=
-//         "<embed src=\""+soundfile+"\" hidden=\"true\" autostart=\"true\" loop=\"false\" />";
-// }
-//
-// function writeScore(sc) {
-//     // Transparent black text
-//     ctx.font = '25px "MS UI Gothic"';
-//     ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
-//     ctx.fillText("SCORE: " +sc, 0, 30);
-// }
+    function checkObject(worm, index) {
+        var wx = worm.x;
+        var wy = worm.y;
+        var ww = worm.r * 2;
+        var wh = worm.r;
+        var px = player.x;
+        var py = player.y;
+        var pw = player.width;
+        var ph = player.height;
+
+        if (intersect(wx, wy, ww, wh, px, py, pw, ph))
+        {
+            if (eat) {
+                score += 1;
+                laugh.play();
+                worms.splice(index, 1);
+            } else {
+                sad.play();
+                worms.splice(index, 1);
+            }
+        }
+    }
+
+    function intersect(wx, wy, ww, wh, px, py, pw, ph) {
+        return !(px > ww + wx || wx > pw + px || py > wh + wy || wy > ph + py);
+    }
+
+    function writeScore(score) {
+        ctx.font = '25px "MS UI Gothic"';
+        ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+        ctx.fillText("SCORE: " +sc, 0, 30);
+}
 
     function getRandomInRange(min, max) {
         return Math.random() * (Math.abs(min) + max) + min;
