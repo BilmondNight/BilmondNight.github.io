@@ -79,26 +79,7 @@ $(document).ready(function () {
         }
     }, true);
 
-//
-// var x1 = -20;
-// var y1 = 50;
-// var x2 = -20;
-// var y2 = 150;
-// var x3 = -20;
-// var y3 = 250;
-//
-//
-// var box1=[x1, y1, 40, 40];
-// var box2=[x2, y2, 40, 40];
-// var box3=[x3, y3, 40, 40];
-// var sc=0;
-//
-// var boxs = [];
-// boxs.push(box1);
-// boxs.push(box2);
-// boxs.push(box3);
-//
-    var worm = { // init worm
+    var worm1 = { // init worm
         x: getRandomInRange(0, canvas.width * 3/4),
         y: getRandomInRange(0, canvas.height -10),
         vx: getRandomInRange(-6, 6),
@@ -106,6 +87,17 @@ $(document).ready(function () {
         r: 5,
         lc: 0
     };
+    var worm2 = { // init worm
+        x: getRandomInRange(0, canvas.width * 3/4),
+        y: getRandomInRange(0, canvas.height -10),
+        vx: getRandomInRange(-6, 6),
+        vy: getRandomInRange(-3, 3),
+        r: 5,
+        lc: 0
+    };
+    var worms = [];
+    worms.push(worm1);
+    worms.push(worm2);
 
     window.requestAnimationFrame(gameLoop); // start the first frame request
     var fps = 15;
@@ -113,88 +105,88 @@ $(document).ready(function () {
         setTimeout(function () {
             window.requestAnimationFrame(gameLoop);
             update();
-            draw();
         }, 1000 / fps);
     }
 
     function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         // player
         frame = ++ frame % 4;
         player.sx = frame * (player.width + 3);
         player.sy = direction * player.height;
-
-        // worms
-        checkCollisions();
-        switch (worm.lc) {
-            case 0:
-                worm.x += worm.vx;
-                worm.y += worm.vy;
-                worm.lc = 1;
-                break;
-
-            case 1:
-                worm.x += worm.vx;
-                worm.y += worm.vy;
-                worm.r += 0.25;
-                if (worm.r > 25) {
-                    worm.lc = 2
-                }
-                break;
-
-            case 2:
-                worm.x += worm.vx;
-                worm.y += worm.vy;
-                worm.r -= 0.25;
-                if (worm.r < 2) {
-                    worm.lc = 3
-                }
-                break;
-
-            case 3:
-                worm.x = getRandomInRange(0, canvas.width * 3/4);
-                worm.y = getRandomInRange(0, canvas.height - 10);
-                worm.lc = 0;
-                break;
-        }
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
 
-        var gradient = ctx.createRadialGradient(worm.x, worm.y, worm.r, worm.x, worm.y, worm.r/2);
-        gradient.addColorStop(0, 'rgb(255,255,255)');
-        gradient.addColorStop(0.5, 'rgb(255,255,0)');
-        gradient.addColorStop(1, 'rgb(255,100,0)');
-        ctx.beginPath();
-        ctx.arc(worm.x, worm.y, worm.r, Math.PI, 0, false);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgb(0, 0, 0)';
-        ctx.closePath();
-        ctx.stroke();
-    }
-
-    function checkCollisions() {
-        // for (let i = 0; i < worms.length; i++) {
-            checkWall(worm);
+        // worms
+        if (Math.random() < 0.03) { // Check if we should generate a new object
+            worms.push({
+                x: getRandomInRange(0, canvas.width * 3/4),
+                y: getRandomInRange(0, canvas.height -10),
+                vx: getRandomInRange(-6, 6),
+                vy: getRandomInRange(-3, 3),
+                r: 5,
+                lc: 0
+            });
+        }
+        for (let i = 0; i < worms.length; i++) {
+            checkWall(worms[i]);
             // checkObject(worms[i]);
-        // }
+            switch (worms[i].lc) {
+                case 0:
+                    worms[i].x += worms[i].vx;
+                    worms[i].y += worms[i].vy;
+                    worms[i].lc = 1;
+                    break;
+
+                case 1:
+                    worms[i].x += worms[i].vx;
+                    worms[i].y += worms[i].vy;
+                    worms[i].r += 0.25;
+                    if (worms[i].r > 25) {
+                        worms[i].lc = 2
+                    }
+                    break;
+
+                case 2:
+                    worms[i].x += worms[i].vx;
+                    worms[i].y += worms[i].vy;
+                    worms[i].r -= 0.25;
+                    if (worms[i].r < 2) {
+                        worms[i].lc = 3
+                    }
+                    break;
+
+                case 3:
+                    worms[i].x = getRandomInRange(0, canvas.width * 3/4);
+                    worms[i].y = getRandomInRange(0, canvas.height - 10);
+                    worms[i].lc = 0;
+                    break;
+            }
+
+            var gradient = ctx.createRadialGradient(worms[i].x, worms[i].y, worms[i].r, worms[i].x, worms[i].y, worms[i].r/2);
+            gradient.addColorStop(0, 'rgb(255,255,255)');
+            gradient.addColorStop(0.5, 'rgb(255,255,0)');
+            gradient.addColorStop(1, 'rgb(255,100,0)');
+            ctx.beginPath();
+            ctx.arc(worms[i].x, worms[i].y, worms[i].r, Math.PI, 0, false);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgb(0, 0, 0)';
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
 
     function checkWall(worm) {
-        if ((worm.x >= canvas.width * 3/4) || (worm.x <= worm.r)) { // reach left or right
+        if ((worm.x >= canvas.width * 3/4) || (worm.x <= worm.r)) { // reach right or left
             worm.vx = -worm.vx; // inverse direction x
         }
-        if (worm.y >= canvas.clientHeight)  { // reach bottom
-            worm.vy = -worm.vy;
-        } else if (worm.y <= worm.r) { // reach top
-            worm.vy = -worm.vy;
+        if ((worm.y >= canvas.clientHeight) || (worm.y <= worm.r)) { // reach bottom or top
+            worm.vy = -worm.vy; // inverse direction y
         }
     }
-    
+
 // function check(x, y, w, h) {
 //     for (i = 0; i < boxs.length; i++) {
 //         var x1=boxs[i][0];
