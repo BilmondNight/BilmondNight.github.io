@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    window.scrollTo(0, 0);
+    $("#header").load("header.html");
 
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
@@ -6,8 +8,7 @@ $(document).ready(function () {
     var dino = new Image();
     dino.src = "image/dino.png"; // sprite sheet
 
-    var title = new Audio('sound/title.mp3');
-    var bgm = new Audio('sound/bgm.mp3');
+    var battle = new Audio('sound/battle.mp3');
     var finish = new Audio('sound/finish.mp3');
     var laugh = new Audio('sound/laugh.mp3');
     var sad = new Audio('sound/sad.mp3');
@@ -32,7 +33,7 @@ $(document).ready(function () {
     var eat = false;
     var score = 0;
 
-    canvas.addEventListener("keydown", function(event) {
+    window.addEventListener("keydown", function(event) {
         if (event.preventDefaulted) {
             return; // Do nothing if event already handled
         }
@@ -74,33 +75,64 @@ $(document).ready(function () {
         event.preventDefault(); // Consume the event so it doesn't get handled twice
     }, true);
 
-    canvas.addEventListener("keyup", function(event) {
+    window.addEventListener("keyup", function(event) {
         if (event.code === "Space") {
             eat = false;
         }
     }, true);
 
-    var worm1 = { // init worm
-        x: getRandomInRange(0, canvas.width * 3/4),
-        y: getRandomInRange(0, canvas.height -10),
-        vx: getRandomInRange(-20, 20),
-        vy: getRandomInRange(-10, 10),
-        r: 5,
-        lc: 0
-    };
-    var worm2 = { // init worm
-        x: getRandomInRange(0, canvas.width * 3/4),
-        y: getRandomInRange(0, canvas.height -10),
-        vx: getRandomInRange(-25, 25),
-        vy: getRandomInRange(-10, 10),
-        r: 5,
-        lc: 0
-    };
+    // var worm = { // init worm
+    //     x: getRandomInRange(0, canvas.width * 3/4),
+    //     y: getRandomInRange(0, canvas.height -10),
+    //     vx: getRandomInRange(-20, 20),
+    //     vy: getRandomInRange(-10, 10),
+    //     r: 5,
+    //     lc: 0,
+    // };
     var worms = [];
-    worms.push(worm1);
-    worms.push(worm2);
+    // worms.push(worm);
 
-    window.requestAnimationFrame(gameLoop); // start the first frame request
+    var start = document.getElementById("start");
+    start.addEventListener("click", function () {
+        var second = document.getElementById("time").value;
+        var ms = second * 1000;
+        battle.play();
+
+        // create player
+        frame = ++ frame % 4;
+        player.sx = frame * (player.width + 3);
+        player.sy = direction * player.height;
+
+        // create worms
+        if (Math.random() < 0.08 && worms.length < 10) { // randomly generate a new object, no more than 10 at same time
+            worms.push({
+                x: getRandomInRange(0, canvas.width * 3/4),
+                y: getRandomInRange(0, canvas.height -10),
+                vx: getRandomInRange(-40, 40),
+                vy: getRandomInRange(-20, 20),
+                r: 5,
+                lc: 0,
+            });
+        }
+
+        setInterval(() => {
+            // gameOverModal.show()
+            battle.stop();
+            finish.play();
+            document.getElementById('score').innerHTML = score;
+        }, ms);
+
+        var counter = setInterval(() => {
+            second --;
+            if (second === 0) {
+                clearInterval(counter);
+            }
+        }, 1000);
+
+        window.requestAnimationFrame(gameLoop);
+        // gameLoop(); // start to run
+    });
+
     var fps = 10;
     function gameLoop() {
         setTimeout(function () {
@@ -112,23 +144,7 @@ $(document).ready(function () {
     function update() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // player
-        frame = ++ frame % 4;
-        player.sx = frame * (player.width + 3);
-        player.sy = direction * player.height;
         ctx.drawImage(dino, player.sx, player.sy, player.width, player.height, player.x, player.y, player.width, player.height);
-
-        // worms
-        if (Math.random() < 0.05 && worms.length < 8) { // randomly generate a new object, no more than 8 at same time
-            worms.push({
-                x: getRandomInRange(0, canvas.width * 3/4),
-                y: getRandomInRange(0, canvas.height -10),
-                vx: getRandomInRange(-40, 40),
-                vy: getRandomInRange(-20, 20),
-                r: 5,
-                lc: 0
-            });
-        }
 
         for (let i = 0; i < worms.length; i++) {
             checkWall(worms[i]);
