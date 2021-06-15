@@ -29,7 +29,6 @@ $(document).ready(function () {
 
     var frame = 0; // sx of sprite sheet
     var direction = 0; // sy of sprite sheet
-    var keys = [];
     var eat = false;
     var score = 0;
     var second = 0;
